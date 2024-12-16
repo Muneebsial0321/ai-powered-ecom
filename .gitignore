@@ -2,3 +2,5 @@
 **/.env/
 **/.env
 **/.next/
+/server/.env
+/client/.env
