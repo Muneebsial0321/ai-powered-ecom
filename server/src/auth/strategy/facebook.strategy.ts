@@ -1,10 +1,11 @@
 import { Injectable } from '@nestjs/common'
 import { PassportStrategy } from '@nestjs/passport';
 import { Strategy, VerifyCallback } from 'passport-facebook';
+import { OAuth } from './validate';
 
 @Injectable()
 export class FacebookStrategy extends PassportStrategy(Strategy, 'facebook') {
-    constructor() {
+    constructor(private readonly OAuth_:OAuth) {
         super({
             clientID: process.env.FACEBOOK_ID,
             clientSecret: process.env.FACEBOOK_SECRET,
@@ -18,17 +19,12 @@ export class FacebookStrategy extends PassportStrategy(Strategy, 'facebook') {
         _refreshToken: string,
         profile: any,
         done: VerifyCallback,
-    ): Promise<any> {
-        const { id, name, emails, photos } = profile;
-
-        const user = {
-            provider: 'facebook',
-            providerId: id,
-            email: emails[0].value,
-            name: `${name.givenName} ${name.familyName}`,
-            picture: photos[0].value,
-        };
-
-        done(null, user);
-    }
+      ): Promise<any> {
+        try {
+          const user = await this.OAuth_.validate( profile);
+          done(null, user);
+        } catch (error) {
+          done(error, false);
+        }
+      }
 }

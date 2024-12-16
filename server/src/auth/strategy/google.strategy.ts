@@ -1,10 +1,12 @@
 import { Injectable } from '@nestjs/common';
 import { PassportStrategy } from '@nestjs/passport';
 import { Strategy, VerifyCallback } from 'passport-google-oauth2';
+import { OAuth } from './validate';
 
 @Injectable()
 export class GoogleStrategy extends PassportStrategy(Strategy, 'google') {
-    constructor() {
+
+    constructor(private readonly OAuth_ :OAuth) {
         super({
             clientID: process.env.GOOGLE_ID,
             clientSecret: process.env.GOOGLE_SECRET,
@@ -18,17 +20,12 @@ export class GoogleStrategy extends PassportStrategy(Strategy, 'google') {
         _refreshToken: string,
         profile: any,
         done: VerifyCallback,
-    ): Promise<any> {
-        const { id, name, emails, photos } = profile;
-
-        const user = {
-            provider: 'google',
-            providerId: id,
-            email: emails[0].value,
-            name: `${name.givenName} ${name.familyName}`,
-            picture: photos[0].value,
-        };
-
-        done(null, user);
-    }
+      ): Promise<any> {
+        try {
+          const user = await this.OAuth_.validate( profile);
+          done(null, user);
+        } catch (error) {
+          done(error, false);
+        }
+      }
 }
