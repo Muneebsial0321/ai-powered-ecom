@@ -20,7 +20,8 @@ export class GithubStrategy extends PassportStrategy(Strategy, 'github') {
         done: VerifyCallback,
       ): Promise<any> {
         try {
-          const user = await this.OAuth_.validate( profile);
+          const user={}
+          // const user = await this.OAuth_.validate( profile);
           done(null, user);
         } catch (error) {
           done(error, false);

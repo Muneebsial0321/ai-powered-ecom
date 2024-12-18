@@ -21,7 +21,8 @@ export class FacebookStrategy extends PassportStrategy(Strategy, 'facebook') {
         done: VerifyCallback,
       ): Promise<any> {
         try {
-          const user = await this.OAuth_.validate( profile);
+          const user={}
+          // const user = await this.OAuth_.validate( profile);
           done(null, user);
         } catch (error) {
           done(error, false);

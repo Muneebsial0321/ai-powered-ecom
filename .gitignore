@@ -3,4 +3,6 @@
 **/.env/
 **/.next/
 /server/.env
+/server/dist
+/server/dist/
 /client/.env
